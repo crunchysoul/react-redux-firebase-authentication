@@ -1,24 +1,17 @@
 import React from "react";
-import {Link} from "react-router-dom";
 import {auth} from "../firebase";
-
-const PasswordForgetPage = () => (
-  <div>
-    <h1>Password Forget Page</h1>
-    <PasswordForgetForm />
-  </div>
-);
 
 const byPropKey = (propertyName, value) => () => ({
   [propertyName]: value,
 });
 
 const INITIAL_STATE = {
-  email: "",
+  passwordOne: "",
+  passwordTwo: "",
   error: null,
 };
 
-class PasswordForgetForm extends React.Component {
+class PasswordChangeForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -27,10 +20,10 @@ class PasswordForgetForm extends React.Component {
   }
 
   onSubmit = event => {
-    const {email} = this.state;
+    const {passwordOne} = this.state;
 
     auth
-      .doPasswordReset(email)
+      .doPasswordUpdate(passwordOne)
       .then(() => {
         this.setState({...INITIAL_STATE});
       })
@@ -42,22 +35,29 @@ class PasswordForgetForm extends React.Component {
   };
 
   render() {
-    const {email, error} = this.state;
-
-    const isInvalid = email === "";
+    const {passwordOne, passwordTwo, error} = this.state;
+    const isInvalid = passwordOne !== passwordTwo || passwordOne === "";
 
     return (
       <form onSubmit={this.onSubmit}>
         <input
-          type="text"
-          value={this.state.email}
-          placeholder="Email Address"
+          value={passwordOne}
+          type="password"
+          placeholder="New Password"
           onChange={event =>
-            this.setState(byPropKey("email", event.target.value))
+            this.setState(byPropKey("passwordOne", event.target.value))
+          }
+        />
+        <input
+          value={passwordTwo}
+          type="password"
+          placeholder="Confirm New Password"
+          onChange={event =>
+            this.setState(byPropKey("passwordTwo", event.target.value))
           }
         />
         <button disabled={isInvalid} type="submit">
-          Rest My Password
+          Reset My Password
         </button>
 
         {error && <p>{error.message}</p>}
@@ -66,12 +66,4 @@ class PasswordForgetForm extends React.Component {
   }
 }
 
-const PasswordForgetLink = () => (
-  <p>
-    <Link to="/pw-forget">Forgot Password?</Link>
-  </p>
-);
-
-export default PasswordForgetPage;
-
-export {PasswordForgetForm, PasswordForgetLink};
+export default PasswordChangeForm;

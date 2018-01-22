@@ -1,12 +1,17 @@
 import React from "react";
+import PropTypes from "prop-types";
 import {Link} from "react-router-dom";
 
 import SignOutButton from "./SignOut";
 import * as routes from "../constants/routes";
 
-const Navigation = ({authUser}) => (
+const Navigation = (props, {authUser}) => (
   <div>{authUser ? <NavigationAuth /> : <NavigationNonAuth />}</div>
 );
+
+Navigation.contextTypes = {
+  authUser: PropTypes.object,
+};
 
 const NavigationAuth = () => (
   <ul>
@@ -18,6 +23,9 @@ const NavigationAuth = () => (
     </li>
     <li>
       <Link to={routes.ACCOUNT}>Accout</Link>
+    </li>
+    <li>
+      <Link to={routes.ADMIN}>Admin</Link>
     </li>
     <li>
       <SignOutButton />
